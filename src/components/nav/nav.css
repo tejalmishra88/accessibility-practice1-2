@@ -1,0 +1,19 @@
+.skip-link {
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  height: 1px;
+  width: 1px;
+  overflow: hidden;
+  position: absolute;
+  white-space: nowrap;
+}
+
+.skip-link:focus {
+  clip: auto;
+  clip-path: none;
+  height: auto;
+  width: auto;
+  overflow: visible;
+  position: static;
+  white-space: normal;
+}
