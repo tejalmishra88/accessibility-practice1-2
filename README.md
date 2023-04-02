@@ -1,70 +1,134 @@
-# Getting Started with Create React App
+# Accessibility practice 1
 
-This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
+## Accessible Tabs
 
-## Available Scripts
+Below is the code for a React component that works like a series of tabs. Clicking a tab displays the content for that tab, and only one tab content is visible at a time.
 
-In the project directory, you can run:
+Following the [WAI guidelines for accessible tabs](https://www.w3.org/WAI/ARIA/apg/patterns/tabpanel/), make this tab component accessible.
 
-### `npm start`
+In particular:
+* Make it so that each of the tabs can be focused and activated by the keyboard using `Space` or `Enter`
+* Add the correct `aria-` and `role` attributs for the tab and tab content panel according to the guidelines.
+  * Add `role="tablist"`, `role="tab"`, `role="tabpanel"` to the appropriate elements
+  * Each tab has `aria-controls=` set to the tab content panel
+  * The active tab has `aria-selected` set to true, and all others set to false.
+  * The tab content element has `aria-labelledby=` referring to the correct tab heading element.
 
-Runs the app in the development mode.\
-Open [http://localhost:3000](http://localhost:3000) to view it in your browser.
+`Tabs.js`
 
-The page will reload when you make changes.\
-You may also see any lint errors in the console.
+```js
+import { useState } from "react"
+import "./Tabs.css"
 
-### `npm test`
+const headings = [
+  'First tab', 'Second tab', 'Third tab'
+]
+const content = [
+  'This is the first tab content',
+  'The second tab is much the same as the first tab',
+  'But the third tabe does its own thing'
+]
 
-Launches the test runner in the interactive watch mode.\
-See the section about [running tests](https://facebook.github.io/create-react-app/docs/running-tests) for more information.
+function Tabs() {
+  const [selectedTab, setSelectedTab] = useState(0)
+  
+  return <div className="Tabs">
+    <div>
+      { headings.map((text, idx) => {
+        return <TabHeading
+          key={idx}
+          onClick={() => {setSelectedTab(idx)}}
+          selected={selectedTab === idx}
+          title={headings[idx]}/>
+      })}
+    </div>
+    <div className="tabcontent">{content[selectedTab]}</div>
+  </div>
+}
 
-### `npm run build`
+function TabHeading(props) {
+  return <span
+    onClick={props.onClick}
+    className={props.selected ? 'tab selected': 'tab'}>
+    {props.title}
+  </span>
+}
 
-Builds the app for production to the `build` folder.\
-It correctly bundles React in production mode and optimizes the build for the best performance.
+export default Tabs
+```
 
-The build is minified and the filenames include the hashes.\
-Your app is ready to be deployed!
+`Tabs.css`
+```css
+.Tabs {
+  padding: 10px;
+  background-color: lightgray;
+}
 
-See the section about [deployment](https://facebook.github.io/create-react-app/docs/deployment) for more information.
+.Tabs .tab {
+  padding: 10px 20px;
+  display: inline-block;
+  background-color: rgb(203, 236, 247);
+  margin-right: 6px;
+}
 
-### `npm run eject`
+.Tabs .tabcontent {
+  padding: 10px;
+  background-color: white;
+}
 
-**Note: this is a one-way operation. Once you `eject`, you can't go back!**
+.Tabs .tab.selected {
+  font-weight: bold;
+  background-color: white;
+}
+```
 
-If you aren't satisfied with the build tool and configuration choices, you can `eject` at any time. This command will remove the single build dependency from your project.
 
-Instead, it will copy all the configuration files and the transitive dependencies (webpack, Babel, ESLint, etc) right into your project so you have full control over them. All of the commands except `eject` will still work, but they will point to the copied scripts so you can tweak them. At this point you're on your own.
 
-You don't have to ever use `eject`. The curated feature set is suitable for small and middle deployments, and you shouldn't feel obligated to use this feature. However we understand that this tool wouldn't be useful if you couldn't customize it when you are ready for it.
+# Accessibility Pratice 2
 
-## Learn More
+## Skip navigation link
 
-You can learn more in the [Create React App documentation](https://facebook.github.io/create-react-app/docs/getting-started).
+The example app below has several navigation links, it'd be nice for someone with a screen reader to be able to easily skip those and get to the main content.
 
-To learn React, check out the [React documentation](https://reactjs.org/).
+This is relatively easy by adding a link `<a href="#maincontent">Skip navigation</a>`, but for aesthetic reasons you might want to hide that link for other users.
 
-### Code Splitting
+Following the [WebAIM article on skip navigation links](https://webaim.org/techniques/skipnav/), create a skip navigation link that is only visible when focused.
 
-This section has moved here: [https://facebook.github.io/create-react-app/docs/code-splitting](https://facebook.github.io/create-react-app/docs/code-splitting)
+Be careful which technique you use to hide the link with CSS since a lot of common techniques also hide the link from screen readers. See the [WebAIM article on invisible content for screen readers](https://webaim.org/techniques/css/invisiblecontent/).
 
-### Analyzing the Bundle Size
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size](https://facebook.github.io/create-react-app/docs/analyzing-the-bundle-size)
-
-### Making a Progressive Web App
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app](https://facebook.github.io/create-react-app/docs/making-a-progressive-web-app)
-
-### Advanced Configuration
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/advanced-configuration](https://facebook.github.io/create-react-app/docs/advanced-configuration)
-
-### Deployment
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/deployment](https://facebook.github.io/create-react-app/docs/deployment)
-
-### `npm run build` fails to minify
-
-This section has moved here: [https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify](https://facebook.github.io/create-react-app/docs/troubleshooting#npm-run-build-fails-to-minify)
+```js
+function App() {
+  return (
+    <div>
+      <nav>
+        <ul>
+          <li>
+            <a href="#">Home</a>
+          </li>
+          <li>
+            <a href="#">About</a>
+          </li>
+          <li>
+            <a href="#">Products</a>
+          </li>
+          <li>
+            <a href="#">Contact Us</a>
+          </li>
+        </ul>
+      </nav>
+      <main id="maincontent">
+        <h1>Welcome</h1>
+        <p>
+          This is the first post on this new website! To meet us, read our{" "}
+          <a href="/about">about us</a> page.
+        </p>
+        <h2>Find out more</h2>
+        <p>
+          If you want to find out more about how to use this, take a look at the{" "}
+          <a href="/instructions">instructions</a>.
+        </p>
+      </main>
+    </div>
+  );
+}
+```
